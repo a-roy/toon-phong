@@ -16,6 +16,6 @@ void main()
   fNormal = normal.xyz;
   fPosition = pos.xyz;
   
-  sPosition = MVP * vec4(position, 1);
+  sPosition = MVP * vec4(position, 1.0);
   gl_Position = sPosition;
 }

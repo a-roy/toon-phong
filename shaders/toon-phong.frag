@@ -43,14 +43,16 @@ void main()
   
   // pass light to fragment shader
   float light = diffuse + specular;
-  vec4 color = vec4(0.7, 0.4, 0.5, 1);
+  vec3 color = vec3(0.7, 0.4, 0.5);
   if (sPosition.x > 0.0)
-    if (light < 0.05)
-      light = 0.05;
-    else if (light < 0.5)
+    if (light < 0.5)
       light = 0.4;
+    //if (light < 0.05)
+    //  light = 0.05;
+    //else if (light < 0.5)
+    //  light = 0.4;
     else
       light = 0.9;
-  gl_FragColor = color * light;
+  gl_FragColor = vec4(color * light, 1);
   
 }

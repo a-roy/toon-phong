@@ -60,7 +60,8 @@ int main()
 	// Load stuff here
 	Entity suzanne;
 	suzanne.loadFromFile("../models/monkey_MODEL.dae");
-	suzanne.setShader(ShaderManager::loadShader("toon-phong"));
+	Shader *toon_phong = ShaderManager::loadShader("toon-phong");
+	Shader *outline = ShaderManager::loadShader("outline");
 	glm::quat rotation;
 	rotation = glm::rotate(rotation, (float)M_PI, glm::vec3(0, 0, 1));
 	rotation = glm::rotate(rotation, (float)M_PI_2, glm::vec3(1, 0, 0));
@@ -79,16 +80,25 @@ int main()
 		glm::vec3(0.0f,1.0f,0.0f)
 	);
 
-	glEnable(GL_DEPTH_TEST);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_BLEND);
 	while (!glfwWindowShouldClose(window))
 	{
 		glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		// Draw stuff here
-		suzanne.getShader()->setUniformMatrix4fv("projectionMatrix", projectionMatrix);
-		suzanne.getShader()->setUniformMatrix4fv("viewMatrix", viewMatrix);
-		//suzanne.getShader()->setUniformVector4fv("camPos", glm::vec4(0.0f, 0.0f, 5.0f, 1.0f));
+		suzanne.setShader(outline);
+		outline->setUniformMatrix4fv("projectionMatrix", projectionMatrix);
+		outline->setUniformMatrix4fv("viewMatrix", viewMatrix);
+		glCullFace(GL_FRONT);
+		glDisable(GL_DEPTH_TEST);
+		suzanne.draw();
+		suzanne.setShader(toon_phong);
+		toon_phong->setUniformMatrix4fv("projectionMatrix", projectionMatrix);
+		toon_phong->setUniformMatrix4fv("viewMatrix", viewMatrix);
+		glCullFace(GL_BACK);
+		glEnable(GL_DEPTH_TEST);
 		suzanne.draw();
 
 	    glDisable(GL_TEXTURE_GEN_S);
