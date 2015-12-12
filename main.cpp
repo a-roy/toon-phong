@@ -11,6 +11,10 @@
 
 GLFWwindow* window;
 
+bool mouseClicked = false;
+double mouseX;
+double mouseY;
+
 bool initWindow(const char *title)
 {
 	if (!glfwInit())
@@ -52,6 +56,53 @@ bool initWindow(const char *title)
 	return true;
 }
 
+void handleInput(Entity &e)
+{
+	/*if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1))
+	{
+		if (!mouseClicked)
+		{
+			mouseClicked = true;
+			glfwGetCursorPos(window, &mouseX, &mouseY);
+		}
+		else
+		{
+			double x, y;
+			glfwGetCursorPos(window, &x, &y);
+			glm::quat rotation;
+			glm::rotate(rotation, (float)(x - mouseX), glm::vec3(0, 1, 0));
+			glm::rotate(rotation, (float)(y - mouseY), glm::vec3(1, 0, 0));
+			e.rotate(rotation);
+			mouseX = x;
+			mouseY = y;
+		}
+	}*/
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+	{
+		e.rotateGlobal(glm::rotate(glm::quat(), -0.1f, glm::vec3(0, 1, 0)));
+	}
+	else if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+	{
+		e.rotateGlobal(glm::rotate(glm::quat(), 0.1f, glm::vec3(0, 1, 0)));
+	}
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+	{
+		e.rotateGlobal(glm::rotate(glm::quat(), -0.1f, glm::vec3(1, 0, 0)));
+	}
+	else if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+	{
+		e.rotateGlobal(glm::rotate(glm::quat(), 0.1f, glm::vec3(1, 0, 0)));
+	}
+	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
+	{
+		e.rotateGlobal(glm::rotate(glm::quat(), 0.1f, glm::vec3(0, 0, 1)));
+	}
+	else if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
+	{
+		e.rotateGlobal(glm::rotate(glm::quat(), -0.1f, glm::vec3(0, 0, 1)));
+	}
+}
+
 int main()
 {
 	if (!initWindow("Toon-Phong"))
@@ -82,8 +133,13 @@ int main()
 
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_BLEND);
+	glDepthFunc(GL_LEQUAL);
+	//glEnable(GL_DEPTH_TEST);
+	glEnable(GL_CULL_FACE);
 	while (!glfwWindowShouldClose(window))
 	{
+		handleInput(suzanne);
+
 		glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 

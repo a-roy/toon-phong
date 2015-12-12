@@ -26,7 +26,7 @@ void main()
   // consider diffuse light color white(1,1,1)
   // all color channels have the same float value
   float diffuse = material_kd * LdotN;
-  float specular = 0.0;
+  float specular = 1.0;
   
   if (LdotN > 0.0)
   {
@@ -47,12 +47,10 @@ void main()
   if (sPosition.x > 0.0)
     if (light < 0.5)
       light = 0.4;
-    //if (light < 0.05)
-    //  light = 0.05;
-    //else if (light < 0.5)
-    //  light = 0.4;
-    else
+    else if (light <= 1.0)
       light = 0.9;
+    else if (light >= 1.4)
+      light = 1.4;
   gl_FragColor = vec4(color * light, 1);
   
 }
