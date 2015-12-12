@@ -1,9 +1,9 @@
-precision highp float;
 uniform float time;
 uniform vec2 resolution;
+
+varying vec4 sPosition;
 varying vec3 fPosition;
 varying vec3 fNormal;
-varying vec4 sPosition;
 varying float light;
 
 void main()
@@ -44,7 +44,7 @@ void main()
   // pass light to fragment shader
   float light = diffuse + specular;
   vec4 color = vec4(0.7, 0.4, 0.5, 1);
-  if (sPosition.x < 0.0)
+  if (sPosition.x > 0.0)
     if (light < 0.05)
       light = 0.05;
     else if (light < 0.5)

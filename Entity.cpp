@@ -21,7 +21,7 @@ void Entity::draw()
 	if (this->_shader != NULL)
 	{
 		this->_shader->enableShader();
-		this->_shader->setUniformMatrix4fv("modelMat", this->_modelMatrix);
+		this->_shader->setUniformMatrix4fv("modelMatrix", this->_modelMatrix);
 	}
 
 	for(int i = 0; i < this->meshes.size(); ++i)
@@ -54,40 +54,40 @@ Shader* Entity::getShader()
 	return this->_shader;
 }
 
-void Model::rotate(glm::quat rotation)
+void Entity::rotate(glm::quat rotation)
 {
 	_rotation = _rotation * rotation;
-	setModelMatrix();
+	calcModelMatrix();
 }
 
-void Model::rotateGlobal(glm::quat rotation)
+void Entity::rotateGlobal(glm::quat rotation)
 {
 	glm::mat4 transform = glm::mat4(1.0f);
 	transform = glm::translate(transform, -_position);
 	_position = glm::vec3(glm::mat4_cast(rotation) * glm::vec4(_position, 1.0f));
 	_rotation = rotation * _rotation;
-	setModelMatrix();
+	calcModelMatrix();
 }
 
-void Model::setRotation(glm::quat rotation)
+void Entity::setRotation(glm::quat rotation)
 {
 	_rotation = rotation;
-	setModelMatrix();
+	calcModelMatrix();
 }
 
-void Model::translate(glm::vec3 translation)
+void Entity::translate(glm::vec3 translation)
 {
 	_position += translation;
-	setModelMatrix();
+	calcModelMatrix();
 }
 
-void Model::setPosition(glm::vec3 position)
+void Entity::setPosition(glm::vec3 position)
 {
 	_position = position;
-	setModelMatrix();
+	calcModelMatrix();
 }
 
-void Model::calcModelMatrix()
+void Entity::calcModelMatrix()
 {
 	_modelMatrix = glm::mat4(1.0f);
 	_modelMatrix = glm::translate(_modelMatrix, _position);
