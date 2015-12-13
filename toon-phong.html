@@ -44,7 +44,7 @@
         }
 
         float diffuseLightWeighting = max(dot(normal, lightDirection), 0.0);
-		if (vPosition.x > 0.0) {
+        if (vPosition.x > 0.0) {
             diffuseLightWeighting = 0.5 * smoothstep(.14,.16,diffuseLightWeighting);
             specularLightWeighting = 0.4 * smoothstep(.29,.31,specularLightWeighting);
         }
@@ -319,7 +319,7 @@
     var zPos = 0;
 
     var speed = 0;
-	var strafe = 0;
+    var strafe = 0;
 
     function handleKeys() {
         if (currentlyPressedKeys[38]) {
@@ -493,9 +493,9 @@
         gl.uniformMatrix3fv(shaderProgram_o.nMatrixUniform, false, normalMatrix);
 
         gl.cullFace(gl.FRONT);
-		gl.enable(gl.SCISSOR_TEST);
+        gl.enable(gl.SCISSOR_TEST);
         gl.drawElements(gl.TRIANGLES, teapotVertexIndexBuffer.numItems, gl.UNSIGNED_SHORT, 0);
-		gl.disable(gl.SCISSOR_TEST);
+        gl.disable(gl.SCISSOR_TEST);
     }
 
     function drawScene() {
@@ -517,8 +517,11 @@
         mat4.rotate(mvMatrix, degToRad(23.4), [1, 0, -1]);
         mat4.rotate(mvMatrix, degToRad(teapotAngle), [0, 1, 0]);
 
+        var outlineEnabled = document.getElementById("outline").checked;
         drawFirstPass();
-        drawOutlines();
+        if (outlineEnabled) {
+            drawOutlines();
+        }
     }
 
 
@@ -537,10 +540,10 @@
                 //joggingAngle += elapsed * 0.6; // 0.6 "fiddle factor" - makes it feel more realistic :-)
                 //yPos = Math.sin(degToRad(joggingAngle)) / 20 + 0.4
             }
-			if (strafe != 0) {
-				xPos -= Math.cos(degToRad(yaw)) * strafe * elapsed;
-				zPos += Math.sin(degToRad(yaw)) * strafe * elapsed;
-			}
+            if (strafe != 0) {
+                xPos -= Math.cos(degToRad(yaw)) * strafe * elapsed;
+                zPos += Math.sin(degToRad(yaw)) * strafe * elapsed;
+            }
 
             yaw += yawRate * elapsed;
             pitch += pitchRate * elapsed;
@@ -570,7 +573,7 @@
         gl.depthFunc(gl.LESS);
         gl.enable(gl.BLEND);
         gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-		gl.scissor(canvas.offsetWidth / 2, 0, canvas.offsetWidth, canvas.offsetHeight);
+        gl.scissor(canvas.offsetWidth / 2, 0, canvas.offsetWidth, canvas.offsetHeight);
 
         document.onkeydown = handleKeyDown;
         document.onkeyup = handleKeyUp;
@@ -600,11 +603,12 @@
 
     <div id="loadingtext">Loading world...</div>
     <br/>
-	Use WASD to run around, and arrow keys to look around.
-	<br/>
-	<br/>
+    Use WASD to run around, and arrow keys to look around.
+    <br/>
+    <br/>
 
     <input type="checkbox" id="specular" checked /> Show specular highlight<br/>
+    <input type="checkbox" id="outline" checked /> Show outlines<br/>
 
     Texture:
     <select id="texture">
