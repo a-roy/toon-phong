@@ -558,7 +558,7 @@
 
 
     function webGLStart() {
-        var canvas = document.getElementById("lesson14-canvas");
+        var canvas = document.getElementById("demo-canvas");
         initGL(canvas);
         initShaders();
         initTextures();
@@ -570,7 +570,7 @@
         gl.depthFunc(gl.LESS);
         gl.enable(gl.BLEND);
         gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-		gl.scissor(512, 0, 1024, 576);
+		gl.scissor(canvas.offsetWidth / 2, 0, canvas.offsetWidth, canvas.offsetHeight);
 
         document.onkeydown = handleKeyDown;
         document.onkeyup = handleKeyUp;
@@ -596,7 +596,7 @@
 
 
 <body onload="webGLStart();">
-    <canvas id="lesson14-canvas" style="border: none;" width="1024" height="576"></canvas>
+    <canvas id="demo-canvas" style="border: none;" width="1024" height="576"></canvas>
 
     <div id="loadingtext">Loading world...</div>
     <br/>
