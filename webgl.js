@@ -41,8 +41,8 @@ function webGLStart(meshes) {
 
 window.onload = function() {
     OBJ.downloadMeshes({
-		'torus':'torus.obj',
-		'suzanne':'suzanne.obj',
+        'teapot':'wt_teapot.obj',
+        'mickey':'Mickey_Mouse.obj',
     },
     webGLStart
     );

@@ -128,41 +128,37 @@ function handleLoadedTexture(texture) {
     gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
     gl.bindTexture(gl.TEXTURE_2D, texture);
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, texture.image);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_NEAREST);
+    //gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    //gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_NEAREST);
+	//gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.MIRRORED_REPEAT);
+	//gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.MIRRORED_REPEAT);
     gl.generateMipmap(gl.TEXTURE_2D);
 
     gl.bindTexture(gl.TEXTURE_2D, null);
 }
 
-
-var earthTexture;
-var galvanizedTexture;
+function initTexture(object, url) {
+    object.texture = gl.createTexture();
+    object.texture.image = new Image();
+    object.texture.image.crossOrigin = "anonymous";
+    object.texture.image.onload = function() {
+        handleLoadedTexture(object.texture);
+    }
+    object.texture.image.src = url;
+}
 
 function initTextures() {
-    earthTexture = gl.createTexture();
-    earthTexture.image = new Image();
-    earthTexture.image.onload = function () {
-        handleLoadedTexture(earthTexture)
-    }
-    earthTexture.image.src = "earth.jpg";
-
-    galvanizedTexture = gl.createTexture();
-    galvanizedTexture.image = new Image();
-    galvanizedTexture.image.onload = function () {
-        handleLoadedTexture(galvanizedTexture)
-    }
-    galvanizedTexture.image.src = "arroway.de_metal+structure+06_d100_flat.jpg";
+    initTexture(app.models.mickey, "Mickey_Mouse_D.png");
 }
 
 function initBuffers() {
   // initialize the mesh's buffers
-  for( mesh in app.meshes ){
-    OBJ.initMeshBuffers( gl, app.meshes[ mesh ] );
+  for (mesh in app.meshes) {
+    OBJ.initMeshBuffers(gl, app.meshes[mesh]);
     // this loops through the mesh names and creates new
     // model objects and setting their mesh to the current mesh
-    app.models[ mesh ] = {};
-    app.models[ mesh ].mesh = app.meshes[ mesh ];
+    app.models[mesh] = {};
+    app.models[mesh].mesh = app.meshes[mesh];
   }
   //app.models.skylight = {};
   //app.models.skylight.mesh = app.models.room_floor.mesh;

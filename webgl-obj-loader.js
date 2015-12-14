@@ -113,7 +113,7 @@
         vertNormals.push.apply(vertNormals, elements);
       } else if (TEXTURE_RE.test(line)) {
         // if this is a texture
-        textures.push.apply(textures, elements);
+        textures.push.apply(textures, elements.slice(0, 2));
       } else if (FACE_RE.test(line)) {
         // if this is a face
         /*

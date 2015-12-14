@@ -87,16 +87,16 @@ function drawFirstPass(model) {
         parseFloat(document.getElementById("diffuseB").value)
     );
 
-    var texture = document.getElementById("texture").value;
-    gl.uniform1i(shaderProgram.useTexturesUniform, texture != "none");
+    //var texture = document.getElementById("texture").value;
+    //gl.uniform1i(shaderProgram.useTexturesUniform, texture != "none");
 
-    gl.activeTexture(gl.TEXTURE0);
-    if (texture == "earth") {
-        gl.bindTexture(gl.TEXTURE_2D, earthTexture);
-    } else if (texture == "galvanized") {
-        gl.bindTexture(gl.TEXTURE_2D, galvanizedTexture);
-    }
-    gl.uniform1i(shaderProgram.samplerUniform, 0);
+    //gl.activeTexture(gl.TEXTURE0);
+    //if (texture == "earth") {
+    //    gl.bindTexture(gl.TEXTURE_2D, earthTexture);
+    //} else if (texture == "galvanized") {
+    //    gl.bindTexture(gl.TEXTURE_2D, galvanizedTexture);
+    //}
+    //gl.uniform1i(shaderProgram.samplerUniform, 0);
 
     gl.uniform1f(
             shaderProgram.materialShininessUniform,
@@ -120,8 +120,16 @@ function drawFirstPass(model) {
             model.mesh.normalBuffer.itemSize,
             gl.FLOAT, false, 0, 0);
 
+	if ('texture' in model) {
+		gl.activeTexture(gl.TEXTURE0);
+		gl.bindTexture(gl.TEXTURE_2D, model.texture);
+		gl.uniform1i(shaderProgram.samplerUniform, 0);
+	}
+	gl.uniform1i(shaderProgram.useTexturesUniform, 'texture' in model);
+
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, model.mesh.indexBuffer);
     setMatrixUniforms();
+	//gl.disable(gl.CULL_FACE);
     gl.cullFace(gl.BACK);
     gl.drawElements(
             gl.TRIANGLES,
@@ -130,7 +138,7 @@ function drawFirstPass(model) {
 }
 
 function drawOutlines(model) {
-    gl.scissor(canvas.offsetWidth / 2, 0, canvas.offsetWidth, canvas.offsetHeight);
+    gl.scissor(gl.viewportWidth / 2, 0, gl.viewportWidth, gl.viewportHeight);
     gl.useProgram(outlineShaderProgram);
     gl.bindBuffer(gl.ARRAY_BUFFER, model.mesh.vertexBuffer);
     gl.vertexAttribPointer(
@@ -153,6 +161,7 @@ function drawOutlines(model) {
     mat3.transpose(normalMatrix);
     gl.uniformMatrix3fv(outlineShaderProgram.nMatrixUniform, false, normalMatrix);
 
+	gl.enable(gl.CULL_FACE);
     gl.cullFace(gl.FRONT);
     gl.enable(gl.SCISSOR_TEST);
     gl.drawElements(
