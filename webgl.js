@@ -43,6 +43,8 @@ window.onload = function() {
     OBJ.downloadMeshes({
         'teapot':'wt_teapot.obj',
         'mickey':'Mickey_Mouse.obj',
+        'palms':'Groupofpalms.obj',
+        //'rock':'Rck-Wtrfll_obj.obj',
     },
     webGLStart
     );

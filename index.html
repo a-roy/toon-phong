@@ -107,7 +107,7 @@
     varying vec4 vPosition;
 
     void main(void) {
-        float outline_weight = 0.05;
+        float outline_weight = 0.03;
         vPosition = uMVMatrix * vec4(aVertexPosition, 1.0);
         vTransformedNormal = uNMatrix * aVertexNormal;
         vec2 outline = outline_weight * normalize(vTransformedNormal.xy);
