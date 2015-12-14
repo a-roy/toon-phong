@@ -30,8 +30,8 @@ function fullscreenChange() {
     gl.viewportHeight = canvas.height = window.innerHeight;
   }
   else{
-    gl.viewportWidth = canvas.width = 500;
-    gl.viewportHeight = canvas.height = 500;
+    gl.viewportWidth = canvas.width = 1024;
+    gl.viewportHeight = canvas.height = 576;
   }
 }
 
