@@ -10,22 +10,25 @@ function drawScene() {
     mat4.rotate(app.mvMatrix, degToRad(app.camera.pitch), [1, 0, 0]);
     mat4.rotate(app.mvMatrix, degToRad(app.camera.heading), [0, 1, 0]);
     mvPushMatrix();
-      mat4.scale(app.mvMatrix, [200, 200, 200]);
-      drawSkybox();
+      mat4.translate(app.mvMatrix, app.camera.inversePosition);
+
+      mvPushMatrix();
+        mat4.translate(app.mvMatrix, [5, 0, -1]);
+        drawObject(app.models.teapot);
+      mvPopMatrix();
+      mvPushMatrix();
+        mat4.translate(app.mvMatrix, [-1, 2.7, -1]);
+        drawObject(app.models.mickey);
+      mvPopMatrix();
+      mvPushMatrix();
+        mat4.translate(app.mvMatrix, [0, -4, 0]);
+        drawObject(app.models.palms);
+      mvPopMatrix();
     mvPopMatrix();
-    mat4.translate(app.mvMatrix, app.camera.inversePosition);
 
     mvPushMatrix();
-      mat4.translate(app.mvMatrix, [5, 0, -1]);
-      drawObject(app.models.teapot);
-    mvPopMatrix();
-    mvPushMatrix();
-      mat4.translate(app.mvMatrix, [-1, 2.7, -1]);
-      drawObject(app.models.mickey);
-    mvPopMatrix();
-    mvPushMatrix();
-      mat4.translate(app.mvMatrix, [0, -4, 0]);
-      drawObject(app.models.palms);
+      mat4.scale(app.mvMatrix, [200, 200, 200]);
+      drawSkybox();
     mvPopMatrix();
 }
 
