@@ -120,7 +120,6 @@ function drawFirstPass(model) {
 
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, model.mesh.indexBuffer);
     setMatrixUniforms();
-    //gl.enable(gl.CULL_FACE);
     gl.cullFace(gl.BACK);
     gl.drawElements(
             gl.TRIANGLES,
@@ -153,7 +152,6 @@ function drawOutlines(model) {
     mat3.transpose(normalMatrix);
     gl.uniformMatrix3fv(outlineShaderProgram.nMatrixUniform, false, normalMatrix);
 
-    //gl.enable(gl.CULL_FACE);
     gl.cullFace(gl.FRONT);
     gl.enable(gl.SCISSOR_TEST);
     gl.drawElements(
@@ -179,7 +177,7 @@ function drawSkybox() {
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, model.mesh.indexBuffer);
     gl.uniformMatrix4fv(skyboxShaderProgram.pMatrixUniform, false, app.pMatrix);
     gl.uniformMatrix4fv(skyboxShaderProgram.mvMatrixUniform, false, app.mvMatrix);
-    //gl.disable(gl.CULL_FACE);
+    gl.cullFace(gl.FRONT);
     gl.drawElements(
             gl.TRIANGLES,
             model.mesh.indexBuffer.numItems,
