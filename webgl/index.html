@@ -7,28 +7,6 @@
 <script type="text/javascript" src="glMatrix-0.9.5.min.js"></script>
 <script type="text/javascript" src="webgl-utils.js"></script>
 
-<script id="skybox-fs" type="x-shader/x-fragment">
-    precision mediump float;
-
-    varying vec3 vTextureCoord;
-    uniform samplerCube uSampler;
-
-    void main(void) {
-        gl_FragColor = textureCube(uSampler, vTextureCoord);
-    }
-</script>
-<script id="skybox-vs" type="x-shader/x-vertex">
-    attribute vec3 aVertexPosition;
-    varying vec3 vTextureCoord;
-    uniform mat4 uMVMatrix;
-    uniform mat4 uPMatrix;
-
-    void main(void) {
-        vTextureCoord = aVertexPosition;
-        vTextureCoord.y = -vTextureCoord.y;
-        gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
-    }
-</script>
 <script id="toon-phong-fs" type="x-shader/x-fragment">
     precision mediump float;
 
@@ -118,6 +96,7 @@
     varying vec2 vTextureCoord;
     uniform sampler2D uSampler;
 
+
     void main(void) {
         vec4 color = texture2D(uSampler, vTextureCoord.st);
         gl_FragColor = vec4(color.rgb * 0.15, 1.0);
@@ -137,6 +116,7 @@
     varying vec4 vPosition;
     varying vec2 vTextureCoord;
 
+
     void main(void) {
         float outline_weight = 0.03;
         vPosition = uMVMatrix * vec4(aVertexPosition, 1.0);
@@ -144,6 +124,32 @@
         vTransformedNormal = uNMatrix * aVertexNormal;
         vec2 outline = outline_weight * normalize(vTransformedNormal.xy);
         gl_Position = uPMatrix * vPosition + vec4(outline, 0.0, 0.0);
+    }
+</script>
+
+<script id="skybox-fs" type="x-shader/x-fragment">
+    precision mediump float;
+
+    varying vec3 vTextureCoord;
+    uniform samplerCube uSampler;
+
+
+    void main(void) {
+        gl_FragColor = textureCube(uSampler, vTextureCoord);
+    }
+</script>
+
+<script id="skybox-vs" type="x-shader/x-vertex">
+    attribute vec3 aVertexPosition;
+    varying vec3 vTextureCoord;
+    uniform mat4 uMVMatrix;
+    uniform mat4 uPMatrix;
+
+
+    void main(void) {
+        vTextureCoord = aVertexPosition;
+        vTextureCoord.y = -vTextureCoord.y;
+        gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
     }
 </script>
 
