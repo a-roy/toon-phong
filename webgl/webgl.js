@@ -27,7 +27,7 @@ function webGLStart(meshes) {
     initPointerLock();
     initTextures();
 
-    gl.clearColor(0.3, 0.3, 0.3, 1.0);
+    gl.clearColor(0.5, 0.7, 1.0, 1.0);
     gl.enable(gl.CULL_FACE);
     gl.enable(gl.DEPTH_TEST);
     gl.depthFunc(gl.LESS);

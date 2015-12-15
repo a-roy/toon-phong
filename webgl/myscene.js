@@ -26,10 +26,12 @@ function drawScene() {
       mvPopMatrix();
     mvPopMatrix();
 
-    mvPushMatrix();
-      mat4.scale(app.mvMatrix, [200, 200, 200]);
-      drawSkybox();
-    mvPopMatrix();
+    if (document.getElementById("skybox").checked) {
+      mvPushMatrix();
+        mat4.scale(app.mvMatrix, [200, 200, 200]);
+        drawSkybox();
+      mvPopMatrix();
+    }
 }
 
 app.drawScene = drawScene;
