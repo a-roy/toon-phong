@@ -78,7 +78,7 @@
 
         vec4 fragmentColor;
         if (uUseTextures) {
-            fragmentColor = texture2D(uSampler, vec2(vTextureCoord.s, vTextureCoord.t));
+            fragmentColor = texture2D(uSampler, vTextureCoord.st);
         } else {
             fragmentColor = vec4(1.0, 1.0, 1.0, 1.0);
         }
@@ -115,15 +115,19 @@
 
     varying vec3 vTransformedNormal;
     varying vec4 vPosition;
+    varying vec2 vTextureCoord;
+    uniform sampler2D uSampler;
 
     void main(void) {
-        gl_FragColor = vec4(0, 0, 0, 1);
+        vec4 color = texture2D(uSampler, vTextureCoord.st);
+        gl_FragColor = vec4(color.rgb * 0.15, 1.0);
     }
 </script>
 
 <script id="outline-vs" type="x-shader/x-vertex">
     attribute vec3 aVertexPosition;
     attribute vec3 aVertexNormal;
+    attribute vec2 aTextureCoord;
 
     uniform mat4 uMVMatrix;
     uniform mat4 uPMatrix;
@@ -131,10 +135,12 @@
 
     varying vec3 vTransformedNormal;
     varying vec4 vPosition;
+    varying vec2 vTextureCoord;
 
     void main(void) {
         float outline_weight = 0.03;
         vPosition = uMVMatrix * vec4(aVertexPosition, 1.0);
+        vTextureCoord = aTextureCoord;
         vTransformedNormal = uNMatrix * aVertexNormal;
         vec2 outline = outline_weight * normalize(vTransformedNormal.xy);
         gl_Position = uPMatrix * vPosition + vec4(outline, 0.0, 0.0);
