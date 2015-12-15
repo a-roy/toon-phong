@@ -106,6 +106,8 @@ function initShaders() {
         gl.getUniformLocation(shaderProgram, "uMaterialShininess");
     shaderProgram.showSpecularHighlightsUniform =
         gl.getUniformLocation(shaderProgram, "uShowSpecularHighlights");
+    shaderProgram.splitUniform =
+        gl.getUniformLocation(shaderProgram, "uSplit");
     shaderProgram.useTexturesUniform =
         gl.getUniformLocation(shaderProgram, "uUseTextures");
     shaderProgram.ambientColorUniform =

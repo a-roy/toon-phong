@@ -35,11 +35,13 @@
     varying vec2 vTextureCoord;
     varying vec3 vTransformedNormal;
     varying vec4 vPosition;
+    varying vec2 vSPosition;
 
     uniform float uMaterialShininess;
 
     uniform bool uShowSpecularHighlights;
     uniform bool uUseTextures;
+    uniform float uSplit;
 
     uniform vec3 uAmbientColor;
 
@@ -66,7 +68,7 @@
         }
 
         float diffuseLightWeighting = max(dot(normal, lightDirection), 0.0);
-        if (vPosition.x > 0.0) {
+        if (vSPosition.x > uSplit) {
             diffuseLightWeighting = 0.8 * smoothstep(.14,.16,diffuseLightWeighting);
             specularLightWeighting = 0.4 * smoothstep(.29,.31,specularLightWeighting);
         }
@@ -96,11 +98,13 @@
     varying vec2 vTextureCoord;
     varying vec3 vTransformedNormal;
     varying vec4 vPosition;
+    varying vec2 vSPosition;
 
 
     void main(void) {
         vPosition = uMVMatrix * vec4(aVertexPosition, 1.0);
         gl_Position = uPMatrix * vPosition;
+        vSPosition = gl_Position.xy / gl_Position.w;
         vTextureCoord = aTextureCoord;
         vTransformedNormal = uNMatrix * aVertexNormal;
     }
@@ -157,6 +161,7 @@
 
     <input type="checkbox" id="specular" checked /> Show specular highlight<br/>
     <input type="checkbox" id="outline" checked /> Show outlines<br/>
+    <input type="range" id="split" min="0" max="100" value="50" /> Location of split<br/>
     <br/>
 
 

@@ -58,6 +58,8 @@ function drawFirstPass(model) {
 
     var specularHighlights = document.getElementById("specular").checked;
     gl.uniform1i(shaderProgram.showSpecularHighlightsUniform, specularHighlights);
+    var split = document.getElementById("split").value * 2.0 / 100.0 - 1.0;
+    gl.uniform1f(shaderProgram.splitUniform, split);
 
     gl.uniform3f(
         shaderProgram.ambientColorUniform,
@@ -127,7 +129,8 @@ function drawFirstPass(model) {
 }
 
 function drawOutlines(model) {
-    gl.scissor(gl.viewportWidth / 2, 0, gl.viewportWidth, gl.viewportHeight);
+    var split = document.getElementById("split").value;
+    gl.scissor(gl.viewportWidth * split / 100, 0, gl.viewportWidth, gl.viewportHeight);
     gl.useProgram(outlineShaderProgram);
     gl.bindBuffer(gl.ARRAY_BUFFER, model.mesh.vertexBuffer);
     gl.vertexAttribPointer(
