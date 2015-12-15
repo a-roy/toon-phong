@@ -11,6 +11,11 @@ function drawScene() {
     mat4.rotate(app.mvMatrix, degToRad(app.camera.heading), [0, 1, 0]);
     mvPushMatrix();
       mat4.translate(app.mvMatrix, app.camera.inversePosition);
+      lightPos = vec3.create([
+              parseFloat(document.getElementById("lightPositionX").value),
+              parseFloat(document.getElementById("lightPositionY").value),
+              parseFloat(document.getElementById("lightPositionZ").value)]);
+      mat4.multiplyVec3(app.mvMatrix, lightPos);
 
       mvPushMatrix();
         mat4.translate(app.mvMatrix, [5, 0, -1]);

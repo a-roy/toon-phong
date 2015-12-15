@@ -131,12 +131,7 @@ function drawFirstPass(model) {
         parseFloat(document.getElementById("ambientB").value)
     );
 
-    gl.uniform3f(
-        shaderProgram.pointLightingLocationUniform,
-        parseFloat(document.getElementById("lightPositionX").value),
-        parseFloat(document.getElementById("lightPositionY").value),
-        parseFloat(document.getElementById("lightPositionZ").value)
-    );
+    gl.uniform3fv(shaderProgram.pointLightingLocationUniform, lightPos);
 
     gl.uniform3f(
         shaderProgram.pointLightingSpecularColorUniform,
