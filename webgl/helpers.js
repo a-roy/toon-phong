@@ -11,21 +11,10 @@ function mvPopMatrix() {
     app.mvMatrix = app.mvMatrixStack.pop();
 }
 
-function setMatrixUniforms() {
-    gl.uniformMatrix4fv(shaderProgram.pMatrixUniform, false, app.pMatrix);
-    gl.uniformMatrix4fv(shaderProgram.mvMatrixUniform, false, app.mvMatrix);
-
-    var normalMatrix = mat3.create();
-    mat4.toInverseMat3(app.mvMatrix, normalMatrix);
-    mat3.transpose(normalMatrix);
-    gl.uniformMatrix3fv(shaderProgram.nMatrixUniform, false, normalMatrix);
-}
-
 function degToRad(degrees) {
     return degrees * Math.PI / 180;
 }
 
-// not sure if I need these 3
 function Array2Buffer(array, iSize, nSize) {
   var buffer = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
@@ -44,17 +33,91 @@ function Array2EBuffer(array, iSize, nSize) {
   return buffer;
 }
 
-function drawBuffer(vpbuf, vcbuf, start, nitems, gltype) {
-  gl.bindBuffer(gl.ARRAY_BUFFER, vpbuf);
-  gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, vpbuf.itemSize, gl.FLOAT, false, 0, 0);
-  gl.bindBuffer(gl.ARRAY_BUFFER, vcbuf);
-  gl.vertexAttribPointer(shaderProgram.vertexColorAttribute, vcbuf.itemSize, gl.FLOAT, false, 0, 0);
-  setMatrixUniforms();
-  gl.drawArrays(gltype, start, nitems);
+function drawHelper(program, model) {
+    gl.useProgram(program);
+    if ('vertexPositionAttribute' in program) {
+        gl.bindBuffer(gl.ARRAY_BUFFER, model.mesh.vertexBuffer);
+        gl.vertexAttribPointer(
+                program.vertexPositionAttribute,
+                model.mesh.vertexBuffer.itemSize,
+                gl.FLOAT, false, 0, 0);
+        gl.enableVertexAttribArray(program.vertexPositionAttribute);
+    }
+    if ('textureCoordAttribute' in program) {
+        gl.bindBuffer(gl.ARRAY_BUFFER, model.mesh.textureBuffer);
+        gl.vertexAttribPointer(
+                program.textureCoordAttribute,
+                model.mesh.textureBuffer.itemSize,
+                gl.FLOAT, false, 0, 0);
+        gl.enableVertexAttribArray(program.textureCoordAttribute);
+    }
+    if ('vertexNormalAttribute' in program) {
+        gl.bindBuffer(gl.ARRAY_BUFFER, model.mesh.normalBuffer);
+        gl.vertexAttribPointer(
+                program.vertexNormalAttribute,
+                model.mesh.normalBuffer.itemSize,
+                gl.FLOAT, false, 0, 0);
+        gl.enableVertexAttribArray(program.vertexNormalAttribute);
+    }
+    if ('texture' in model) {
+        gl.activeTexture(gl.TEXTURE0);
+        gl.bindTexture(gl.TEXTURE_2D, model.texture);
+        gl.uniform1i(program.samplerUniform, 0);
+    }
+    if ('useTexturesUniform' in program) {
+        gl.uniform1i(program.useTexturesUniform, 'texture' in model);
+    }
+    if ('cubemap' in model) {
+        gl.activeTexture(gl.TEXTURE0);
+        gl.bindTexture(gl.TEXTURE_CUBE_MAP, model.cubemap);
+        gl.uniform1i(program.samplerUniform, 0);
+    }
+
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, model.mesh.indexBuffer);
+
+    gl.uniformMatrix4fv(program.pMatrixUniform, false, app.pMatrix);
+    gl.uniformMatrix4fv(program.mvMatrixUniform, false, app.mvMatrix);
+
+    if ('nMatrixUniform' in program) {
+        var normalMatrix = mat3.create();
+        mat4.toInverseMat3(app.mvMatrix, normalMatrix);
+        mat3.transpose(normalMatrix);
+        gl.uniformMatrix3fv(program.nMatrixUniform, false, normalMatrix);
+    }
+    gl.drawElements(
+            gl.TRIANGLES,
+            model.mesh.indexBuffer.numItems,
+            gl.UNSIGNED_SHORT, 0);
+    if ('vertexPositionAttribute' in program) {
+        gl.disableVertexAttribArray(program.vertexPositionAttribute);
+    }
+    if ('textureCoordAttribute' in program) {
+        gl.disableVertexAttribArray(program.textureCoordAttribute);
+    }
+    if ('vertexNormalAttribute' in program) {
+        gl.disableVertexAttribArray(program.vertexNormalAttribute);
+    }
+}
+
+function setupVertices(program, model) {
+    gl.bindBuffer(gl.ARRAY_BUFFER, model.mesh.vertexBuffer);
+    gl.vertexAttribPointer(
+            program.vertexPositionAttribute,
+            model.mesh.vertexBuffer.itemSize,
+            gl.FLOAT, false, 0, 0);
+}
+
+function setupNormals(program, model) {
+    gl.bindBuffer(gl.ARRAY_BUFFER, model.mesh.normalBuffer);
+    gl.vertexAttribPointer(
+            program.vertexNormalAttribute,
+            model.mesh.normalBuffer.itemSize,
+            gl.FLOAT, false, 0, 0);
 }
 
 function drawFirstPass(model) {
     gl.useProgram(shaderProgram);
+    gl.cullFace(gl.BACK);
 
     var specularHighlights = document.getElementById("specular").checked;
     gl.uniform1i(shaderProgram.showSpecularHighlightsUniform, specularHighlights);
@@ -93,95 +156,22 @@ function drawFirstPass(model) {
             shaderProgram.materialShininessUniform,
             parseFloat(document.getElementById("shininess").value));
 
-    gl.bindBuffer(gl.ARRAY_BUFFER, model.mesh.vertexBuffer);
-    gl.vertexAttribPointer(
-            shaderProgram.vertexPositionAttribute,
-            model.mesh.vertexBuffer.itemSize,
-            gl.FLOAT, false, 0, 0);
-
-    gl.bindBuffer(gl.ARRAY_BUFFER, model.mesh.textureBuffer);
-    gl.vertexAttribPointer(
-            shaderProgram.textureCoordAttribute,
-            model.mesh.textureBuffer.itemSize,
-            gl.FLOAT, false, 0, 0);
-
-    gl.bindBuffer(gl.ARRAY_BUFFER, model.mesh.normalBuffer);
-    gl.vertexAttribPointer(
-            shaderProgram.vertexNormalAttribute,
-            model.mesh.normalBuffer.itemSize,
-            gl.FLOAT, false, 0, 0);
-
-    if ('texture' in model) {
-        gl.activeTexture(gl.TEXTURE0);
-        gl.bindTexture(gl.TEXTURE_2D, model.texture);
-        gl.uniform1i(shaderProgram.samplerUniform, 0);
-    }
-    gl.uniform1i(shaderProgram.useTexturesUniform, 'texture' in model);
-
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, model.mesh.indexBuffer);
-    setMatrixUniforms();
-    gl.cullFace(gl.BACK);
-    gl.drawElements(
-            gl.TRIANGLES,
-            model.mesh.indexBuffer.numItems,
-            gl.UNSIGNED_SHORT, 0);
+    drawHelper(shaderProgram, model);
 }
 
 function drawOutlines(model) {
     var split = document.getElementById("split").value;
     gl.scissor(gl.viewportWidth * split / 100, 0, gl.viewportWidth, gl.viewportHeight);
     gl.useProgram(outlineShaderProgram);
-    gl.bindBuffer(gl.ARRAY_BUFFER, model.mesh.vertexBuffer);
-    gl.vertexAttribPointer(
-            outlineShaderProgram.vertexPositionAttribute,
-            model.mesh.vertexBuffer.itemSize,
-            gl.FLOAT, false, 0, 0);
-
-    gl.bindBuffer(gl.ARRAY_BUFFER, model.mesh.normalBuffer);
-    gl.vertexAttribPointer(
-            outlineShaderProgram.vertexNormalAttribute,
-            model.mesh.normalBuffer.itemSize,
-            gl.FLOAT, false, 0, 0);
-
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, model.mesh.indexBuffer);
-    gl.uniformMatrix4fv(outlineShaderProgram.pMatrixUniform, false, app.pMatrix);
-    gl.uniformMatrix4fv(outlineShaderProgram.mvMatrixUniform, false, app.mvMatrix);
-
-    var normalMatrix = mat3.create();
-    mat4.toInverseMat3(app.mvMatrix, normalMatrix);
-    mat3.transpose(normalMatrix);
-    gl.uniformMatrix3fv(outlineShaderProgram.nMatrixUniform, false, normalMatrix);
-
     gl.cullFace(gl.FRONT);
     gl.enable(gl.SCISSOR_TEST);
-    gl.drawElements(
-            gl.TRIANGLES,
-            model.mesh.indexBuffer.numItems,
-            gl.UNSIGNED_SHORT, 0);
+    drawHelper(outlineShaderProgram, model);
     gl.disable(gl.SCISSOR_TEST);
 }
 
 function drawSkybox() {
-    var model = app.models.skybox;
-    gl.useProgram(skyboxShaderProgram);
-    gl.bindBuffer(gl.ARRAY_BUFFER, model.mesh.vertexBuffer);
-    gl.vertexAttribPointer(
-            skyboxShaderProgram.vertexPositionAttribute,
-            model.mesh.vertexBuffer.itemSize,
-            gl.FLOAT, false, 0, 0);
-
-    gl.activeTexture(gl.TEXTURE0);
-    gl.bindTexture(gl.TEXTURE_CUBE_MAP, model.cubemap);
-    gl.uniform1i(skyboxShaderProgram.samplerUniform, 0);
-
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, model.mesh.indexBuffer);
-    gl.uniformMatrix4fv(skyboxShaderProgram.pMatrixUniform, false, app.pMatrix);
-    gl.uniformMatrix4fv(skyboxShaderProgram.mvMatrixUniform, false, app.mvMatrix);
     gl.cullFace(gl.FRONT);
-    gl.drawElements(
-            gl.TRIANGLES,
-            model.mesh.indexBuffer.numItems,
-            gl.UNSIGNED_SHORT, 0);
+    drawHelper(skyboxShaderProgram, app.models.skybox);
 }
 
 function drawObject(model) {

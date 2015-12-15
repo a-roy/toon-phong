@@ -10,22 +10,22 @@
 <script id="skybox-fs" type="x-shader/x-fragment">
     precision mediump float;
 
-    varying vec3 texCoord;
+    varying vec3 vTextureCoord;
     uniform samplerCube uSampler;
 
     void main(void) {
-        gl_FragColor = textureCube(uSampler, texCoord);
+        gl_FragColor = textureCube(uSampler, vTextureCoord);
     }
 </script>
 <script id="skybox-vs" type="x-shader/x-vertex">
     attribute vec3 aVertexPosition;
-    varying vec3 texCoord;
+    varying vec3 vTextureCoord;
     uniform mat4 uMVMatrix;
     uniform mat4 uPMatrix;
 
     void main(void) {
-        texCoord = aVertexPosition;
-        texCoord.y = -texCoord.y;
+        vTextureCoord = aVertexPosition;
+        vTextureCoord.y = -vTextureCoord.y;
         gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
     }
 </script>

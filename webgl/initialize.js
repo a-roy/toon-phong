@@ -46,62 +46,75 @@ function getShader(gl, id) {
     return shader;
 }
 
+function initAttribsAndUniforms(program) {
+    gl.useProgram(program);
+
+    var vertexPositionAttribute =
+        gl.getAttribLocation(program, "aVertexPosition");
+    if (vertexPositionAttribute >= 0) {
+        program.vertexPositionAttribute = vertexPositionAttribute;
+    }
+
+    var vertexNormalAttribute =
+        gl.getAttribLocation(program, "aVertexNormal");
+    if (vertexNormalAttribute >= 0) {
+        program.vertexNormalAttribute = vertexNormalAttribute;
+    }
+
+    var textureCoordAttribute =
+        gl.getAttribLocation(program, "aTextureCoord");
+    if (textureCoordAttribute >= 0) {
+        program.textureCoordAttribute = textureCoordAttribute;
+    }
+
+    var pMatrixUniform =
+        gl.getUniformLocation(program, "uPMatrix");
+    if (pMatrixUniform != null) {
+        program.pMatrixUniform = pMatrixUniform;
+    }
+
+    var mvMatrixUniform =
+        gl.getUniformLocation(program, "uMVMatrix");
+    if (mvMatrixUniform != null) {
+        program.mvMatrixUniform = mvMatrixUniform;
+    }
+
+    var nMatrixUniform =
+        gl.getUniformLocation(program, "uNMatrix");
+    if (nMatrixUniform != null) {
+        program.nMatrixUniform = nMatrixUniform;
+    }
+
+    var samplerUniform =
+        gl.getUniformLocation(program, "uSampler");
+    if (samplerUniform != null) {
+        program.samplerUniform = samplerUniform;
+    }
+}
+
+function initShader(frag, vert) {
+    var fragmentShader = getShader(gl, frag);
+    var vertexShader = getShader(gl, vert);
+
+    var program = gl.createProgram();
+    gl.attachShader(program, vertexShader);
+    gl.attachShader(program, fragmentShader);
+    gl.linkProgram(program);
+
+    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+        alert("Could not initialise shaders");
+    }
+
+    initAttribsAndUniforms(program);
+    return program;
+}
+
 
 function initShaders() {
-    var fragmentShader = getShader(gl, "toon-phong-fs");
-    var vertexShader = getShader(gl, "toon-phong-vs");
-    var fragmentShader_o = getShader(gl, "outline-fs");
-    var vertexShader_o = getShader(gl, "outline-vs");
-    var fragmentShader_s = getShader(gl, "skybox-fs");
-    var vertexShader_s = getShader(gl, "skybox-vs");
+    shaderProgram = initShader("toon-phong-fs", "toon-phong-vs");
 
-    // main shader
-    shaderProgram = gl.createProgram();
-    gl.attachShader(shaderProgram, vertexShader);
-    gl.attachShader(shaderProgram, fragmentShader);
-    gl.linkProgram(shaderProgram);
-
-    // outline shader
-    outlineShaderProgram = gl.createProgram();
-    gl.attachShader(outlineShaderProgram, vertexShader_o);
-    gl.attachShader(outlineShaderProgram, fragmentShader_o);
-    gl.linkProgram(outlineShaderProgram);
-
-    // skybox shader
-    skyboxShaderProgram = gl.createProgram();
-    gl.attachShader(skyboxShaderProgram, vertexShader_s);
-    gl.attachShader(skyboxShaderProgram, fragmentShader_s);
-    gl.linkProgram(skyboxShaderProgram);
-
-    if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
-        alert("Could not initialise shaders");
-    }
-    else if (!gl.getProgramParameter(outlineShaderProgram, gl.LINK_STATUS)) {
-        alert("Could not initialise shaders");
-    }
-    else if (!gl.getProgramParameter(skyboxShaderProgram, gl.LINK_STATUS)) {
-        alert("Could not initialise shaders");
-    }
-
-    // main shader
     gl.useProgram(shaderProgram);
 
-    shaderProgram.vertexPositionAttribute =
-        gl.getAttribLocation(shaderProgram, "aVertexPosition");
-    gl.enableVertexAttribArray(shaderProgram.vertexPositionAttribute);
-
-    shaderProgram.vertexNormalAttribute =
-        gl.getAttribLocation(shaderProgram, "aVertexNormal");
-    gl.enableVertexAttribArray(shaderProgram.vertexNormalAttribute);
-
-    shaderProgram.textureCoordAttribute =
-        gl.getAttribLocation(shaderProgram, "aTextureCoord");
-    gl.enableVertexAttribArray(shaderProgram.textureCoordAttribute);
-
-    shaderProgram.pMatrixUniform = gl.getUniformLocation(shaderProgram, "uPMatrix");
-    shaderProgram.mvMatrixUniform = gl.getUniformLocation(shaderProgram, "uMVMatrix");
-    shaderProgram.nMatrixUniform = gl.getUniformLocation(shaderProgram, "uNMatrix");
-    shaderProgram.samplerUniform = gl.getUniformLocation(shaderProgram, "uSampler");
     shaderProgram.materialShininessUniform =
         gl.getUniformLocation(shaderProgram, "uMaterialShininess");
     shaderProgram.showSpecularHighlightsUniform =
@@ -119,34 +132,8 @@ function initShaders() {
     shaderProgram.pointLightingDiffuseColorUniform =
         gl.getUniformLocation(shaderProgram, "uPointLightingDiffuseColor");
 
-    // outline shader
-    gl.useProgram(outlineShaderProgram);
-
-    outlineShaderProgram.vertexPositionAttribute =
-        gl.getAttribLocation(outlineShaderProgram, "aVertexPosition");
-    gl.enableVertexAttribArray(outlineShaderProgram.vertexPositionAttribute);
-    outlineShaderProgram.vertexNormalAttribute =
-        gl.getAttribLocation(outlineShaderProgram, "aVertexNormal");
-    gl.enableVertexAttribArray(outlineShaderProgram.vertexNormalAttribute);
-    outlineShaderProgram.pMatrixUniform =
-        gl.getUniformLocation(outlineShaderProgram, "uPMatrix");
-    outlineShaderProgram.mvMatrixUniform =
-        gl.getUniformLocation(outlineShaderProgram, "uMVMatrix");
-    outlineShaderProgram.nMatrixUniform =
-        gl.getUniformLocation(outlineShaderProgram, "uNMatrix");
-
-    // skybox shader
-    gl.useProgram(skyboxShaderProgram);
-
-    skyboxShaderProgram.vertexPositionAttribute =
-        gl.getAttribLocation(skyboxShaderProgram, "aVertexPosition");
-    gl.enableVertexAttribArray(skyboxShaderProgram.vertexPositionAttribute);
-    skyboxShaderProgram.pMatrixUniform =
-        gl.getUniformLocation(skyboxShaderProgram, "uPMatrix");
-    skyboxShaderProgram.mvMatrixUniform =
-        gl.getUniformLocation(skyboxShaderProgram, "uMVMatrix");
-    skyboxShaderProgram.samplerUniform =
-        gl.getUniformLocation(skyboxShaderProgram, "uSampler");
+    outlineShaderProgram = initShader("outline-fs", "outline-vs");
+    skyboxShaderProgram = initShader("skybox-fs", "skybox-vs");
 }
 
 
