@@ -45,7 +45,7 @@ window.onload = function() {
         'teapot':'wt_teapot.obj',
         'mickey':'Mickey_Mouse.obj',
         'palms':'Groupofpalms.obj',
-        //'rock':'Rck-Wtrfll_obj.obj',
+        'bread':'Bread.obj',
     },
     webGLStart
     );

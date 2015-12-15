@@ -192,6 +192,7 @@ function initCubeMap(object, urls) {
 function initTextures() {
     initTexture(app.models.mickey, "Mickey_Mouse_D.png");
     initTexture(app.models.palms, "Palms.png");
+    initTexture(app.models.bread, "Bread.png");
     initCubeMap(app.models.skybox, [
             "sb_strato/stratosphere_ft.png", "sb_strato/stratosphere_bk.png",
             "sb_strato/stratosphere_dn.png", "sb_strato/stratosphere_up.png",

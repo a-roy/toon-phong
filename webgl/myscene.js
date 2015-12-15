@@ -17,6 +17,10 @@ function drawScene() {
         drawObject(app.models.teapot);
       mvPopMatrix();
       mvPushMatrix();
+        mat4.translate(app.mvMatrix, [-5, 0, -1]);
+        drawObject(app.models.bread);
+      mvPopMatrix();
+      mvPushMatrix();
         mat4.translate(app.mvMatrix, [-1, 2.7, -1]);
         drawObject(app.models.mickey);
       mvPopMatrix();
