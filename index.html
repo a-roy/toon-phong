@@ -7,6 +7,28 @@
 <script type="text/javascript" src="glMatrix-0.9.5.min.js"></script>
 <script type="text/javascript" src="webgl-utils.js"></script>
 
+<script id="skybox-fs" type="x-shader/x-fragment">
+    precision mediump float;
+
+    varying vec3 texCoord;
+    uniform samplerCube uSampler;
+
+    void main(void) {
+        gl_FragColor = textureCube(uSampler, texCoord);
+    }
+</script>
+<script id="skybox-vs" type="x-shader/x-vertex">
+    attribute vec3 aVertexPosition;
+    varying vec3 texCoord;
+    uniform mat4 uMVMatrix;
+    uniform mat4 uPMatrix;
+
+    void main(void) {
+        texCoord = aVertexPosition;
+        texCoord.y = -texCoord.y;
+        gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
+    }
+</script>
 <script id="toon-phong-fs" type="x-shader/x-fragment">
     precision mediump float;
 
@@ -153,9 +175,9 @@
     <table style="border: 0; padding: 10px;">
         <tr>
             <td><b>Location:</b>
-            <td>X: <input type="text" id="lightPositionX" value="1.0" />
-            <td>Y: <input type="text" id="lightPositionY" value="4.0" />
-            <td>Z: <input type="text" id="lightPositionZ" value="-20.0" />
+            <td>X: <input type="text" id="lightPositionX" value="-20.0" />
+            <td>Y: <input type="text" id="lightPositionY" value="40.0" />
+            <td>Z: <input type="text" id="lightPositionZ" value="20.0" />
         </tr>
         <tr>
             <td><b>Specular colour:</b>

@@ -22,6 +22,7 @@ function webGLStart(meshes) {
     canvas = document.getElementById("demo-canvas");
     initGL(canvas);
     initShaders();
+    loadSkybox();
     initBuffers();
     initPointerLock();
     initTextures();

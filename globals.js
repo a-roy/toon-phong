@@ -106,5 +106,6 @@ var app = {};
 
 var shaderProgram;
 var outlineShaderProgram;
+var skyboxShaderProgram;
 var light = 0;
 var angle = 0;

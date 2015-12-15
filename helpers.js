@@ -87,17 +87,6 @@ function drawFirstPass(model) {
         parseFloat(document.getElementById("diffuseB").value)
     );
 
-    //var texture = document.getElementById("texture").value;
-    //gl.uniform1i(shaderProgram.useTexturesUniform, texture != "none");
-
-    //gl.activeTexture(gl.TEXTURE0);
-    //if (texture == "earth") {
-    //    gl.bindTexture(gl.TEXTURE_2D, earthTexture);
-    //} else if (texture == "galvanized") {
-    //    gl.bindTexture(gl.TEXTURE_2D, galvanizedTexture);
-    //}
-    //gl.uniform1i(shaderProgram.samplerUniform, 0);
-
     gl.uniform1f(
             shaderProgram.materialShininessUniform,
             parseFloat(document.getElementById("shininess").value));
@@ -120,16 +109,16 @@ function drawFirstPass(model) {
             model.mesh.normalBuffer.itemSize,
             gl.FLOAT, false, 0, 0);
 
-	if ('texture' in model) {
-		gl.activeTexture(gl.TEXTURE0);
-		gl.bindTexture(gl.TEXTURE_2D, model.texture);
-		gl.uniform1i(shaderProgram.samplerUniform, 0);
-	}
-	gl.uniform1i(shaderProgram.useTexturesUniform, 'texture' in model);
+    if ('texture' in model) {
+        gl.activeTexture(gl.TEXTURE0);
+        gl.bindTexture(gl.TEXTURE_2D, model.texture);
+        gl.uniform1i(shaderProgram.samplerUniform, 0);
+    }
+    gl.uniform1i(shaderProgram.useTexturesUniform, 'texture' in model);
 
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, model.mesh.indexBuffer);
     setMatrixUniforms();
-	//gl.disable(gl.CULL_FACE);
+    //gl.enable(gl.CULL_FACE);
     gl.cullFace(gl.BACK);
     gl.drawElements(
             gl.TRIANGLES,
@@ -161,7 +150,7 @@ function drawOutlines(model) {
     mat3.transpose(normalMatrix);
     gl.uniformMatrix3fv(outlineShaderProgram.nMatrixUniform, false, normalMatrix);
 
-	gl.enable(gl.CULL_FACE);
+    //gl.enable(gl.CULL_FACE);
     gl.cullFace(gl.FRONT);
     gl.enable(gl.SCISSOR_TEST);
     gl.drawElements(
@@ -169,6 +158,29 @@ function drawOutlines(model) {
             model.mesh.indexBuffer.numItems,
             gl.UNSIGNED_SHORT, 0);
     gl.disable(gl.SCISSOR_TEST);
+}
+
+function drawSkybox() {
+    var model = app.models.skybox;
+    gl.useProgram(skyboxShaderProgram);
+    gl.bindBuffer(gl.ARRAY_BUFFER, model.mesh.vertexBuffer);
+    gl.vertexAttribPointer(
+            skyboxShaderProgram.vertexPositionAttribute,
+            model.mesh.vertexBuffer.itemSize,
+            gl.FLOAT, false, 0, 0);
+
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_CUBE_MAP, model.cubemap);
+    gl.uniform1i(skyboxShaderProgram.samplerUniform, 0);
+
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, model.mesh.indexBuffer);
+    gl.uniformMatrix4fv(skyboxShaderProgram.pMatrixUniform, false, app.pMatrix);
+    gl.uniformMatrix4fv(skyboxShaderProgram.mvMatrixUniform, false, app.mvMatrix);
+    //gl.disable(gl.CULL_FACE);
+    gl.drawElements(
+            gl.TRIANGLES,
+            model.mesh.indexBuffer.numItems,
+            gl.UNSIGNED_SHORT, 0);
 }
 
 function drawObject(model) {
