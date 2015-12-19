@@ -121,8 +121,8 @@ function drawFirstPass(model) {
 
     var specularHighlights = document.getElementById("specular").checked;
     gl.uniform1i(shaderProgram.showSpecularHighlightsUniform, specularHighlights);
-    var split = document.getElementById("split").value * 2.0 / 100.0 - 1.0;
-    gl.uniform1f(shaderProgram.splitUniform, split);
+    var split = document.getElementById("split").value;
+    gl.uniform1f(shaderProgram.splitUniform, gl.viewportWidth * split / 100.0);
 
     gl.uniform3f(
         shaderProgram.ambientColorUniform,

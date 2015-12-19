@@ -13,7 +13,6 @@
     varying vec2 vTextureCoord;
     varying vec3 vTransformedNormal;
     varying vec4 vPosition;
-    varying vec4 vSPosition;
 
     uniform float uMaterialShininess;
 
@@ -46,7 +45,7 @@
         }
 
         float diffuseLightWeighting = max(dot(normal, lightDirection), 0.0);
-        if (vSPosition.x / vSPosition.w > uSplit) {
+        if (gl_FragCoord.x > uSplit) {
             diffuseLightWeighting = 0.8 * smoothstep(.14,.16,diffuseLightWeighting);
             specularLightWeighting = 0.4 * smoothstep(.29,.31,specularLightWeighting);
         }
@@ -76,13 +75,11 @@
     varying vec2 vTextureCoord;
     varying vec3 vTransformedNormal;
     varying vec4 vPosition;
-    varying vec4 vSPosition;
 
 
     void main(void) {
         vPosition = uMVMatrix * vec4(aVertexPosition, 1.0);
         gl_Position = uPMatrix * vPosition;
-        vSPosition = gl_Position;
         vTextureCoord = aTextureCoord;
         vTransformedNormal = uNMatrix * aVertexNormal;
     }
